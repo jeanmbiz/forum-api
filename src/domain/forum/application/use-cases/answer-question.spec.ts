@@ -1,18 +1,26 @@
-import { AnswersRepository } from '../repositories/answers-repository'
+import { InMemoryAnswerRepository } from 'test/repositories/in-memory-answers-repository'
 import { AnswerQuestionUseCase } from './answer-question'
 
-const fakeAnswersRepository: AnswersRepository = {
-  create: async () => {},
-}
+let inMemoryAnswerRepository: InMemoryAnswerRepository
+// sut = system under test
+let sut: AnswerQuestionUseCase
 
-test('create an answer', async () => {
-  const answerQuestion = new AnswerQuestionUseCase(fakeAnswersRepository)
-
-  const answer = await answerQuestion.execute({
-    questionId: '1',
-    instructorId: '1',
-    content: 'Nova resposta',
+describe('Create Answer', () => {
+  beforeEach(() => {
+    // automatiza a criação do DB em memória e use case
+    inMemoryAnswerRepository = new InMemoryAnswerRepository()
+    sut = new AnswerQuestionUseCase(inMemoryAnswerRepository)
   })
+  it('should be able to create an answer', async () => {
+    const { answer } = await sut.execute({
+      instructorId: '1',
+      questionId: '1',
+      content: 'Conteúdo da Resposta',
+    })
 
-  expect(answer.content).toEqual('Nova resposta')
+    // checkar pelo id que foi criada
+    expect(answer.id).toBeTruthy()
+    // certificar que o id foi salvo no repositório
+    expect(inMemoryAnswerRepository.items[0].id).toEqual(answer.id)
+  })
 })
