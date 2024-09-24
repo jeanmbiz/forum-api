@@ -1,4 +1,4 @@
-import { Answer } from '../../entrerprise/entities/answer'
+import { Answer } from '../../enterprise/entities/answer'
 
 export interface AnswersRepository {
   // método create que vai receber uma Anser(entidade) e vai retornar uma Promise de void

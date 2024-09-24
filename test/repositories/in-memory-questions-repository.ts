@@ -1,4 +1,4 @@
-import { Question } from '@/domain/forum/entrerprise/entities/question'
+import { Question } from '@/domain/forum/enterprise/entities/question'
 import { QuestionsRepository } from './../../src/domain/forum/application/repositories/questions-repository'
 import { PaginationParams } from '@/core/repositories/pagination-params'
 export class InMemoryQuestionsRepository implements QuestionsRepository {

@@ -1,6 +1,6 @@
-import { AnswerProps } from '../../src/domain/forum/entrerprise/entities/answer'
+import { AnswerProps } from '../../src/domain/forum/enterprise/entities/answer'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import { Answer } from '@/domain/forum/entrerprise/entities/answer'
+import { Answer } from '@/domain/forum/enterprise/entities/answer'
 import { faker } from '@faker-js/faker'
 
 export function makeAnswer(

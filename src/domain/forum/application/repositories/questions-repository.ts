@@ -1,5 +1,5 @@
 import { PaginationParams } from '@/core/repositories/pagination-params'
-import { Question } from '../../entrerprise/entities/question'
+import { Question } from '../../enterprise/entities/question'
 
 export interface QuestionsRepository {
   // método create que vai receber uma Anser(entidade) e vai retornar uma Promise de void
