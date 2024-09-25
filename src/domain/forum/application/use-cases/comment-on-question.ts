@@ -1,6 +1,6 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { QuestionComment } from '../../enterprise/entities/question-comment'
-import { QuestionsCommentsRepository } from '../repositories/question-comments-repository'
+import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
 import { QuestionsRepository } from '../repositories/questions-repository'
 
 interface CommentOnQuestionUseCaseRequest {
@@ -17,7 +17,7 @@ export class CommentOnQuestionUseCase {
   // inversão de dependência - contrato/interface
   constructor(
     private questionsRepository: QuestionsRepository,
-    private questionsCommentsRepository: QuestionsCommentsRepository,
+    private questionCommentsRepository: QuestionCommentsRepository,
   ) {}
 
   async execute({
@@ -38,7 +38,7 @@ export class CommentOnQuestionUseCase {
       content,
     })
 
-    await this.questionsCommentsRepository.create(questionComment)
+    await this.questionCommentsRepository.create(questionComment)
 
     return { questionComment }
   }
