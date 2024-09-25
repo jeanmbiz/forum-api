@@ -40,7 +40,7 @@ describe('Fetch Question Answers', () => {
     expect(answers).toHaveLength(3)
   })
 
-  it.only('should be able to fetch paginated question answers', async () => {
+  it('should be able to fetch paginated question answers', async () => {
     // criar 22 perguntas no repositório
     for (let i = 1; i <= 22; i++) {
       await inMemoryAnswersRepository.create(
