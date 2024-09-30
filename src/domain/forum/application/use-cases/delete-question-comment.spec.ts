@@ -2,6 +2,7 @@ import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-
 import { DeleteQuestionCommentUseCase } from './delete-question-comment'
 import { makeQuestionComment } from 'test/factories/make-question-commet'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 // sut = system under test
@@ -40,13 +41,15 @@ describe('Delete Question Comment', () => {
     // salva no repositório
     await inMemoryQuestionCommentsRepository.create(questionComment)
 
-    // espero que retorne um erro
-    expect(() => {
-      return sut.execute({
-        questionCommentId: questionComment.id.toString(),
-        // executa o caso de uso com id de outro author
-        authorId: 'author-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      questionCommentId: questionComment.id.toString(),
+      // executa o caso de uso com id de outro author
+      authorId: 'author-2',
+    })
+
+    // espero que seja erro
+    expect(result.isLeft()).toBe(true)
+    // espero que o erro seja do tipo NotAllowedError
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

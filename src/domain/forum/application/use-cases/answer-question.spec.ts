@@ -12,15 +12,15 @@ describe('Create Answer', () => {
     sut = new AnswerQuestionUseCase(inMemoryAnswersRepository)
   })
   it('should be able to create an answer', async () => {
-    const { answer } = await sut.execute({
+    const result = await sut.execute({
       instructorId: '1',
       questionId: '1',
       content: 'Conteúdo da Resposta',
     })
 
-    // checkar pelo id que foi criada
-    expect(answer.id).toBeTruthy()
-    // certificar que o id foi salvo no repositório
-    expect(inMemoryAnswersRepository.items[0].id).toEqual(answer.id)
+    // espero que seja sucesso
+    expect(result.isRight()).toBe(true)
+    // certificar que o answer foi salvo no repositório
+    expect(inMemoryAnswersRepository.items[0]).toEqual(result.value?.answer)
   })
 })
