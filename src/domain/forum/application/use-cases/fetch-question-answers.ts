@@ -1,3 +1,4 @@
+import { Either, right } from '@/core/either'
 import { Answer } from '../../enterprise/entities/answer'
 import { AnswersRepository } from '../repositories/answers-repository'
 
@@ -6,9 +7,15 @@ interface FetchQuestionAnswersUseCaseRequest {
   page: number
 }
 
-interface FetchQuestionAnswersUseCaseResponse {
-  answers: Answer[]
-}
+// type Either: retorna ou sucesso ou erro
+type FetchQuestionAnswersUseCaseResponse = Either<
+  // caso de erro
+  null,
+  // caso de sucesso
+  {
+    answers: Answer[]
+  }
+>
 
 export class FetchQuestionAnswersUseCase {
   // dependência do repositody - contrato/interface
@@ -26,6 +33,7 @@ export class FetchQuestionAnswersUseCase {
       },
     )
 
-    return { answers }
+    // right = retorno sucesso
+    return right({ answers })
   }
 }

@@ -1,5 +1,8 @@
+import { Either, left, right } from '@/core/either'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionsRepository } from '../repositories/questions-repository'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 interface EditQuestionUseCaseRequest {
   authorId: string
@@ -8,9 +11,15 @@ interface EditQuestionUseCaseRequest {
   content: string
 }
 
-interface EditQuestionUseCaseResponse {
-  question: Question
-}
+// type Either: retorna ou sucesso ou erro
+type EditQuestionUseCaseResponse = Either<
+  // caso de erro
+  ResourceNotFoundError | NotAllowedError,
+  // caso de sucesso
+  {
+    question: Question
+  }
+>
 
 export class EditQuestionUseCase {
   // dependência do repositody - contrato/interface
@@ -25,11 +34,13 @@ export class EditQuestionUseCase {
     const question = await this.questionsRepository.findById(questionId)
 
     if (!question) {
-      throw new Error('Question not found.')
+      // left = retorno de erro
+      return left(new ResourceNotFoundError())
     }
 
     if (authorId !== question.authorId.toString()) {
-      throw new Error('Not Allowed.')
+      // left = retorno de erro
+      return left(new NotAllowedError())
     }
 
     // edita o titulo e conteudo da pergunta
@@ -38,6 +49,7 @@ export class EditQuestionUseCase {
 
     await this.questionsRepository.save(question)
 
-    return { question }
+    // right = retorno sucesso
+    return right({ question })
   }
 }

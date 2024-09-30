@@ -1,11 +1,20 @@
+import { Either, left, right } from '@/core/either'
 import { AnswerCommentsRepository } from '../repositories/answer-comments-repository'
+import { NotAllowedError } from './errors/not-allowed-error'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 interface DeleteAnswerCommentUseCaseRequest {
   authorId: string
   answerCommentId: string
 }
 
-interface DeleteAnswerCommentUseCaseResponse {}
+// type Either: retorna ou sucesso ou erro
+type DeleteAnswerCommentUseCaseResponse = Either<
+  // caso de erro
+  ResourceNotFoundError | NotAllowedError,
+  // caso de sucesso: objeto vazio
+  Record<string, never>
+>
 
 export class DeleteAnswerCommentUseCase {
   // inversão de dependência - contrato/interface
@@ -19,16 +28,19 @@ export class DeleteAnswerCommentUseCase {
       await this.answerCommentsRepository.findById(answerCommentId)
 
     if (!answerComment) {
-      throw new Error('Answer comment not found.')
+      // left = retorno de erro
+      return left(new ResourceNotFoundError())
     }
 
     // verifica se o autor do comentário é o mesmo que está deletando
     if (answerComment.authorId.toString() !== authorId) {
-      throw new Error('Not allowed.')
+      // left = retorno de erro
+      return left(new NotAllowedError())
     }
 
     await this.answerCommentsRepository.delete(answerComment)
 
-    return {}
+    // right = retorno sucesso
+    return right({})
   }
 }

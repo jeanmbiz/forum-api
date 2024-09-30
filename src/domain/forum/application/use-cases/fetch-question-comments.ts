@@ -1,3 +1,4 @@
+import { Either, right } from '@/core/either'
 import { QuestionComment } from '../../enterprise/entities/question-comment'
 import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
 
@@ -6,9 +7,15 @@ interface FetchQuestionCommentsUseCaseRequest {
   page: number
 }
 
-interface FetchQuestionCommentsUseCaseResponse {
-  questionComments: QuestionComment[]
-}
+// type Either: retorna ou sucesso ou erro
+type FetchQuestionCommentsUseCaseResponse = Either<
+  // caso de erro
+  null,
+  // caso de sucesso
+  {
+    questionComments: QuestionComment[]
+  }
+>
 
 export class FetchQuestionCommentsUseCase {
   // dependência do repositody - contrato/interface
@@ -27,6 +34,7 @@ export class FetchQuestionCommentsUseCase {
         },
       )
 
-    return { questionComments }
+    // right = retorno sucesso
+    return right({ questionComments })
   }
 }
