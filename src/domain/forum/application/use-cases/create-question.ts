@@ -1,3 +1,4 @@
+import { QuestionAttachment } from './../../enterprise/entities/question-attachment'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionsRepository } from '../repositories/questions-repository'
@@ -7,6 +8,8 @@ interface CreateQuestionUseCaseRequest {
   authorId: string
   title: string
   content: string
+  // recebe apenas os ids dos anexos previamente criados
+  attachmentsIds: string[]
 }
 
 // type Either: retorna ou sucesso ou erro
@@ -27,12 +30,24 @@ export class CreateQuestionUseCase {
     authorId,
     title,
     content,
+    attachmentsIds,
   }: CreateQuestionUseCaseRequest): Promise<CreateQuestionUseCaseResponse> {
+    // crio a pergunta
     const question = Question.create({
       content,
       authorId: new UniqueEntityID(authorId),
       title,
     })
+
+    // crio anexos da pergunta
+    const questionAttachments = attachmentsIds.map((attachmentId) => {
+      return QuestionAttachment.create({
+        attachmentId: new UniqueEntityID(attachmentId).toString(),
+        questionId: question.id.toString(),
+      })
+    })
+
+    question.attachments = questionAttachments
 
     await this.questionsRepository.create(question)
 
