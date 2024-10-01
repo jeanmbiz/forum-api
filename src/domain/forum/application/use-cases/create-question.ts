@@ -42,8 +42,8 @@ export class CreateQuestionUseCase {
     // crio anexos da pergunta
     const questionAttachments = attachmentsIds.map((attachmentId) => {
       return QuestionAttachment.create({
-        attachmentId: new UniqueEntityID(attachmentId).toString(),
-        questionId: question.id.toString(),
+        attachmentId: new UniqueEntityID(attachmentId),
+        questionId: question.id,
       })
     })
 
