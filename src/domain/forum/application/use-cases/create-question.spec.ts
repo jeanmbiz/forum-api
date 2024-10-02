@@ -25,9 +25,13 @@ describe('Create Question', () => {
     // certificar que foi salvo no repositório
     expect(inMemoryQuestionsRepository.items[0]).toEqual(result.value?.question)
     // certificar que tem 2 anexos no repositório
-    expect(inMemoryQuestionsRepository.items[0].attachments).toHaveLength(2)
+    expect(
+      inMemoryQuestionsRepository.items[0].attachments.currentItems,
+    ).toHaveLength(2)
     // certificar que no repositório tem 1 array com 2 objetos dos attachmentsIds criados
-    expect(inMemoryQuestionsRepository.items[0].attachments).toEqual([
+    expect(
+      inMemoryQuestionsRepository.items[0].attachments.currentItems,
+    ).toEqual([
       expect.objectContaining({ attachmentId: new UniqueEntityID('1') }),
       expect.objectContaining({ attachmentId: new UniqueEntityID('2') }),
     ])
