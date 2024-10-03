@@ -1,7 +1,14 @@
+import { QuestionAttachmentsRepository } from '@/domain/forum/application/repositories/question-attachments-repository'
 import { Question } from '@/domain/forum/enterprise/entities/question'
 import { QuestionsRepository } from './../../src/domain/forum/application/repositories/questions-repository'
 import { PaginationParams } from '@/core/repositories/pagination-params'
 export class InMemoryQuestionsRepository implements QuestionsRepository {
+  // inversão de dependencia do contrato de anexo de questões
+  // um repositṕrio pode depender de outros repositórios
+  constructor(
+    private questionAttachmentsRepository: QuestionAttachmentsRepository,
+  ) {}
+
   public items: Question[] = []
 
   async create(question: Question) {
@@ -48,5 +55,10 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     const itemIndex = this.items.findIndex((item) => item.id === question.id)
 
     this.items.splice(itemIndex, 1)
+
+    // ao deletar perguntas, deletar tb os anexos
+    this.questionAttachmentsRepository.deleteManyByQuestionId(
+      question.id.toString(),
+    )
   }
 }
