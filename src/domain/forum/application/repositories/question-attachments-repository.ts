@@ -3,4 +3,5 @@ import { QuestionAttachment } from '../../enterprise/entities/question-attachmen
 export interface QuestionAttachmentsRepository {
   // encontrar vários anexos de uma pergunta
   findManyByQuestionId(questionId: string): Promise<QuestionAttachment[]>
+  deleteManyByQuestionId(questionId: string): Promise<void>
 }
