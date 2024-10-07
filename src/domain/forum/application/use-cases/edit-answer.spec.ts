@@ -3,7 +3,10 @@ import { InMemoryAnswersRepository } from '../../../../../test/repositories/in-m
 import { EditAnswerUseCase } from './edit-answer'
 import { makeAnswer } from 'test/factories/make-answer'
 import { NotAllowedError } from './errors/not-allowed-error'
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository'
+import { makeAnswerAttachment } from 'test/factories/make-answer-attachments'
 
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 // sut = system under test
 let sut: EditAnswerUseCase
@@ -12,7 +15,13 @@ describe('Edit Answer', () => {
   beforeEach(() => {
     // automatiza a criação do DB em memória e use case
     inMemoryAnswersRepository = new InMemoryAnswersRepository()
-    sut = new EditAnswerUseCase(inMemoryAnswersRepository)
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository()
+
+    sut = new EditAnswerUseCase(
+      inMemoryAnswersRepository,
+      inMemoryAnswerAttachmentsRepository,
+    )
   })
   it('should be able to edit a answer by id', async () => {
     // criar pergunta c/ id pelo Factory
@@ -26,15 +35,39 @@ describe('Edit Answer', () => {
     // salvo pergunta no repositório
     await inMemoryAnswersRepository.create(newAnswer)
 
+    // cadastro 2 anexos para a pergunta criada
+    inMemoryAnswerAttachmentsRepository.items.push(
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        attachmentId: new UniqueEntityID('1'),
+      }),
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        attachmentId: new UniqueEntityID('2'),
+      }),
+    )
+
     await sut.execute({
       answerId: newAnswer.id.toValue(),
       authorId: 'author-1',
       content: 'Content test',
+      attachmentsIds: ['1', '3'],
     })
 
     expect(inMemoryAnswersRepository.items[0]).toMatchObject({
       content: 'Content test',
     })
+    // certificar que tem 2 anexos no repositório
+    expect(
+      inMemoryAnswersRepository.items[0].attachments.currentItems,
+    ).toHaveLength(2)
+    // certificar que no repositório tem 1 array com 2 com attachmentsIds 1 e 3
+    expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual(
+      [
+        expect.objectContaining({ attachmentId: new UniqueEntityID('1') }),
+        expect.objectContaining({ attachmentId: new UniqueEntityID('3') }),
+      ],
+    )
   })
 
   it('should not be able to edit a answer by id from another author', async () => {
@@ -53,6 +86,7 @@ describe('Edit Answer', () => {
       answerId: newAnswer.id.toValue(),
       authorId: 'author-2',
       content: 'Content test',
+      attachmentsIds: [],
     })
 
     // espero que seja erro
