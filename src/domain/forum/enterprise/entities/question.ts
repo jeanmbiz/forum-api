@@ -77,6 +77,7 @@ export class Question extends AggregateRoot<QuestionProps> {
   // para adicionar anexo após a criação da pergunta
   set attachments(attachments: QuestionAttachmentList) {
     this.props.attachments = attachments
+    this.touch()
   }
 
   set bestAnswerId(bestAnswerId: UniqueEntityID | undefined) {
