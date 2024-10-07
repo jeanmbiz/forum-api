@@ -1,7 +1,9 @@
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
 import { AnswerQuestionUseCase } from './answer-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository'
 
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 // sut = system under test
 let sut: AnswerQuestionUseCase
@@ -9,7 +11,12 @@ let sut: AnswerQuestionUseCase
 describe('Create Answer', () => {
   beforeEach(() => {
     // automatiza a criação do DB em memória e use case
-    inMemoryAnswersRepository = new InMemoryAnswersRepository()
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository()
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    )
+
     sut = new AnswerQuestionUseCase(inMemoryAnswersRepository)
   })
   it('should be able to create an answer', async () => {
