@@ -4,6 +4,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 import dayjs from 'dayjs'
 import { QuestionAttachmentList } from './question-attachment-list'
+import { QuestionBestAnswerChosenEvent } from '../events/question-best-answer-chosen-event'
 
 export interface QuestionProps {
   authorId: UniqueEntityID
@@ -80,8 +81,24 @@ export class Question extends AggregateRoot<QuestionProps> {
     this.touch()
   }
 
+  // utilizado para escolher melhor resposta e remover/alterar melhor resposta
   set bestAnswerId(bestAnswerId: UniqueEntityID | undefined) {
+    // se bestAnswerId for invalido, return
+    if (bestAnswerId === undefined) {
+      return
+    }
+
+    // se o id da melgor resposta for udentifned OU ele for diferente do recebido: dispara o evento
+    if (
+      this.props.bestAnswerId === undefined ||
+      !bestAnswerId.equals(this.props.bestAnswerId)
+    ) {
+      // this é o tópico
+      this.addDomainEvent(new QuestionBestAnswerChosenEvent(this, bestAnswerId))
+    }
+
     this.props.bestAnswerId = bestAnswerId
+
     this.touch()
   }
 
