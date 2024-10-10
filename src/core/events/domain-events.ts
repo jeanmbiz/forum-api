@@ -2,7 +2,7 @@ import { AggregateRoot } from '../entities/aggregate-root'
 import { UniqueEntityID } from '../entities/unique-entity-id'
 import { DomainEvent } from './domain-event'
 
-type DomainEventCallback = (event: unknown) => void
+type DomainEventCallback = (event: any) => void // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export class DomainEvents {
   // handlersMap: é um objeto que tem o nome do evento(string) o array de subscribers(DomainEventCallback[])
